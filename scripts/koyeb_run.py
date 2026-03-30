@@ -233,14 +233,16 @@ class KoyebAutoLogin:
         return False
 
     def keepalive(self, page):
-        self.log("保活任务...", "STEP")
+        self.log("开始保活任务...", "STEP")
         page.goto(KOYEB_SERVICES_URL, timeout=60000)
         page.wait_for_load_state('networkidle', timeout=60000)
         self.shot(page, "services")
+        self.log(f"准备进入服务详情页", "STEP")
         service_xpath = '//*[@id="root"]/div[2]/div[2]/main/div/div[3]/div/div[2]/div/div[1]/div[1]/a'
         if self.click(page, service_xpath, "进入服务详情"):
             page.wait_for_load_state('networkidle')
             time.sleep(3)
+            self.log(f"准备访问公网地址", "STEP")
             public_xpath = '//*[@id="root"]/div[2]/div[2]/main/div/div[1]/div[1]/div/div[2]/a'
             self.click(page, public_xpath, "访问公网地址")
             time.sleep(5)
