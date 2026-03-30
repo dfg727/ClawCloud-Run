@@ -280,7 +280,7 @@ class KoyebAutoLogin:
                 self.shot(page, "start")
                 
                 # 点击 GitHub 登录
-                if not self.click(page, ['button:has-text("GitHub")', '[data-provider="github"]'], "GitHub 按钮"):
+                if not self.click(page, ['a:has-text("GitHub")', '[data-method="github"]'], "GitHub 按钮"):
                     self.notify(False, "找不到 GitHub 按钮"); return
 
                 time.sleep(3)
