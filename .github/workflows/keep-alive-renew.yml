@@ -1,4 +1,4 @@
-name: Koyeb 自动登录保活
+name: AutoRenew 自动登录保活
 
 on:
   schedule:
@@ -38,7 +38,7 @@ jobs:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
           REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-        run: python scripts/koyeb_run.py
+        run: python scripts/auto_renew.py
         
 #      - name: 私有仓库 Actions 保活
 #        run: |
