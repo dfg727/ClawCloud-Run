@@ -277,24 +277,30 @@ class KoyebAutoLogin:
                 if self.gh_session:
                     context.add_cookies([{'name': 'user_session', 'value': self.gh_session, 'domain': 'github.com', 'path': '/'}, {'name': 'logged_in', 'value': 'yes', 'domain': 'github.com', 'path': '/'}])
                 
+                self.log(f"准备访问Koyeb登录页", "STEP")
                 page.goto(KOYEB_SIGNIN_URL)
                 page.wait_for_load_state('networkidle')
                 self.shot(page, "start")
                 
-                # 点击 GitHub 登录
+                # 点击 GitHub 登录按钮
+                self.log(f"准备点击 GitHub 按钮", "STEP")
                 if not self.click(page, ['a:has-text("GitHub")', '[data-method="github"]'], "GitHub 按钮"):
                     self.notify(False, "找不到 GitHub 按钮"); return
 
+                # 等待 GitHub 登录页加载完成
                 time.sleep(3)
+                self.log(f"准备等待 GitHub 登录页加载完成", "STEP")
                 if 'github.com/login' in page.url or 'github.com/session' in page.url:
                     if not self.login_github(page):
                         self.notify(False, "GitHub 登录失败"); return
                 
                 # 处理 OAuth 授权
+                self.log(f"准备处理 OAuth 授权", "STEP")
                 if 'github.com/login/oauth/authorize' in page.url:
                     self.click(page, 'button[name="authorize"]', "OAuth 授权")
                 
                 # 等待进入 Koyeb 控制台
+                self.log(f"准备等待进入 Koyeb 控制台", "STEP")
                 page.wait_for_url(lambda u: 'koyeb.com/services' in u or 'koyeb.com/' in u, timeout=60000)
                 self.log("成功进入 Koyeb", "SUCCESS")
                 
