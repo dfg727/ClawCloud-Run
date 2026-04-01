@@ -16,14 +16,14 @@ from base import BaseAutoLogin
 
 # ==================== 配置 ====================
 PROXY_DSN = os.environ.get("PROXY_DSN", "").strip()
-LOGIN_ENTRY_URL = "https://eu-central-1.run.claw.cloud/login"
+LOGIN_ENTRY_URL = "https://us-east-1.run.claw.cloud/login"
 SIGNIN_URL = f"{LOGIN_ENTRY_URL}/signin"
 
 class ClawCloudAutoLogin(BaseAutoLogin):
     def __init__(self):
         super().__init__("clawcloud")
-        self.detected_region = 'eu-central-1'
-        self.region_base_url = 'https://eu-central-1.run.claw.cloud'
+        self.detected_region = 'us-east-1'
+        self.region_base_url = 'https://us-east-1.run.claw.cloud'
         
     def detect_region(self, url):
         try:

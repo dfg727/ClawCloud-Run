@@ -71,17 +71,21 @@ class KoyebAutoLogin(BaseAutoLogin):
 
                 # 等待 GitHub 登录页加载完成
                 time.sleep(3)
+                self.log(f"等待 GitHub 登录页加载完成", "STEP")
                 if 'github.com/login' in page.url or 'github.com/session' in page.url:
                     if not self.login_github(page):
                         self.notify(False, "GitHub 登录失败"); return
                 
                 # 处理 OAuth 授权
+                self.log(f"准备处理 OAuth 授权", "STEP")
                 if 'github.com/login/oauth/authorize' in page.url:
                     self.click(page, 'button[name="authorize"]', "OAuth 授权")
                 
                 # 等待进入 Koyeb 控制台
-                page.wait_for_url(lambda u: 'koyeb.com/services' in u or 'koyeb.com/' in u, timeout=60000)
+                self.log(f"等待进入 Koyeb 控制台", "STEP")
+                page.wait_for_url(lambda u: 'koyeb.com' in u and 'signin' not in u, timeout=60000)
                 self.log("成功进入 Koyeb", "SUCCESS")
+                self.shot(page, "登录成功")
                 
                 self.save_github_session(context)
                 self.keepalive(page)
