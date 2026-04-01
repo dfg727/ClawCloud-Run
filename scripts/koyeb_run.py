@@ -26,15 +26,17 @@ class KoyebAutoLogin(BaseAutoLogin):
         self.shot(page, "services")
         
         self.log(f"准备进入服务详情页", "STEP")
-        service_xpath = '//*[@id="root"]/div[2]/div[2]/main/div/div[3]/div/div[2]/div/div[1]/div[1]/a'
+        service_xpath = r'div.\\@container a.items-center'
         if self.click(page, service_xpath, "进入服务详情"):
             page.wait_for_load_state('networkidle')
             time.sleep(3)
             self.log(f"准备访问公网地址", "STEP")
-            public_xpath = '//*[@id="root"]/div[2]/div[2]/main/div/div[1]/div[1]/div/div[2]/a'
+            public_xpath = 'div.items-start a.truncate'
             self.click(page, public_xpath, "访问公网地址")
             time.sleep(5)
             self.shot(page, "final")
+        else:
+            self.log("未找到服务详情页", "ERROR")
 
     def notify(self, ok, err=""):
         msg = f"<b>🤖 {self.service_name} 自动任务</b>\n\n<b>状态:</b> {'✅ 成功' if ok else '❌ 失败'}\n<b>时间:</b> {time.strftime('%Y-%m-%d %H:%M:%S')}"
