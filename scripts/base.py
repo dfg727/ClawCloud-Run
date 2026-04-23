@@ -91,8 +91,17 @@ class BaseAutoLogin:
         self.service_name = service_name
         self.username = os.environ.get('GH_USERNAME')
         self.password = os.environ.get('GH_PASSWORD')
-        # 不同服务可能使用不同的 Session Secret 名        
-        self.gh_session = os.environ.get('GH_SESSION', '').strip()
+        # 根据 service_name 不同保存到不同的 key (例如 GH_SESSION_KOYEB, GH_SESSION_CLAWCLOUD)
+        self.session_key = f"GH_SESSION_{service_name.upper()}"
+        self.gh_session = os.environ.get(self.session_key, '').strip()
+        
+        # 兼容旧版 GH_SESSION (如果是 clawcloud 且新 key 没值)
+        if not self.gh_session and service_name == 'clawcloud':
+            old_val = os.environ.get('GH_SESSION', '').strip()
+            if old_val:
+                self.gh_session = old_val
+                self.session_key = 'GH_SESSION'
+                
         self.tg = Telegram()
         self.secret = SecretUpdater()
         self.logs = []
@@ -226,11 +235,11 @@ class BaseAutoLogin:
                     if val == self.gh_session:
                         self.log("Cookie 未变化，跳过更新", "INFO")
                         return True
-                    if self.secret.update('GH_SESSION', val):
-                        self.log(f"GH_SESSION 已自动更新", "SUCCESS")
-                        self.tg.send(f"🔑 <b>Github Cookie 已自动更新</b>")
+                    if self.secret.update(self.session_key, val):
+                        self.log(f"{self.session_key} 已自动更新", "SUCCESS")
+                        self.tg.send(f"🔑 <b>{self.service_name.capitalize()} Github Cookie 已自动更新</b>")
                     else:
-                        self.tg.send(f"🔑 <b>Github 新 Cookie</b>\n<tg-spoiler>{val}</tg-spoiler>")
+                        self.tg.send(f"🔑 <b>{self.service_name.capitalize()} Github 新 Cookie</b>\n<tg-spoiler>{val}</tg-spoiler>")
                     return True
         except: pass
         return False
