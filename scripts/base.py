@@ -152,7 +152,7 @@ class BaseAutoLogin:
                 return True
             try:
                 page.reload(timeout=10000)
-                page.wait_for_load_state('networkidle', timeout=10000)
+                page.wait_for_load_state('networkidle', timeout=10*1000)
             except: pass
         return False
 
@@ -199,7 +199,7 @@ class BaseAutoLogin:
             page.fill('input[name="password"]', self.password)
             page.click('input[type="submit"]')
             time.sleep(3)
-            page.wait_for_load_state('networkidle', timeout=30000)
+            page.wait_for_load_state('networkidle', timeout=60*1000)
             
             if 'verified-device' in page.url or 'device-verification' in page.url:
                 if not self.wait_device(page): return False
