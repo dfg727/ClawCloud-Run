@@ -21,7 +21,8 @@ def run_all():
     # 执行 ClawCloud
     print("\n🔹 [1/2] 开始 ClawCloud 任务")
     try:
-        ClawCloudAutoLogin().run()
+        # ClawCloudAutoLogin().run()
+        print("Skip ClawCloud")
     except Exception as e:
         print(f"❌ ClawCloud 任务执行失败: {e}")
         
