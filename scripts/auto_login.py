@@ -210,7 +210,8 @@ class AutoLogin:
         for s in sels:
             try:
                 el = page.locator(s).first
-                if el.is_visible(timeout=3000):
+                el.wait_for(state="visible", timeout=3000)
+                if el.is_visible():
                     # 模拟人类随机延迟
                     time.sleep(random.uniform(0.5, 1.5))
                     el.hover() # 先悬停

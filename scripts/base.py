@@ -131,7 +131,10 @@ class BaseAutoLogin:
         for s in sels:
             try:
                 el = page.locator(s).first
-                if el.is_visible(timeout=3000):
+                # locator.is_visible() 不接受 timeout 参数，会抛出 TypeError 并被 except 捕获
+                # 这里改用 wait_for 等待元素可见，超时会抛出异常并进入下一个选择器
+                el.wait_for(state="visible", timeout=3000)
+                if el.is_visible():
                     time.sleep(random.uniform(0.5, 1.5))
                     el.hover()
                     time.sleep(random.uniform(0.2, 0.5))
@@ -184,7 +187,8 @@ class BaseAutoLogin:
         for sel in selectors:
             try:
                 el = page.locator(sel).first
-                if el.is_visible(timeout=2000):
+                el.wait_for(state="visible", timeout=2000)
+                if el.is_visible():
                     el.type(code, delay=100)
                     page.keyboard.press("Enter")
                     time.sleep(3)

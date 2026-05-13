@@ -21,18 +21,23 @@ class KoyebAutoLogin(BaseAutoLogin):
         
     def keepalive(self, page):
         self.log("开始保活任务...", "STEP")
-        page.goto(KOYEB_SERVICES_URL, timeout=60000)
-        page.wait_for_load_state('networkidle', timeout=60000)
+        page.goto(KOYEB_SERVICES_URL, timeout=60*1000)
+        page.wait_for_load_state('networkidle', timeout=60*1000)
         self.shot(page, "services")
         
         self.log(f"准备进入服务详情页", "STEP")
-        service_xpath = r'div.\\@container a.items-center'
-        if self.click(page, service_xpath, "进入服务详情"):
+        # 修正选择器：CSS 中的 @ 需要转义，r'...' 原始字符串中只需要一个反斜杠
+        # 另外增加一个通用的 a[href^="/services/"] 作为回退，提高鲁棒性
+        service_sels = [
+            r'div.grid a.items-center', 
+            'a[href^="/services/93"].items-center'
+        ]
+        if self.click(page, service_sels, "进入服务详情"):
             page.wait_for_load_state('networkidle')
             time.sleep(3)
             self.log(f"准备访问公网地址", "STEP")
-            public_xpath = 'div.items-start a.truncate'
-            self.click(page, public_xpath, "访问公网地址")
+            public_sels = ['div.items-start a.truncate', 'a[href*=".koyeb.app"]']
+            self.click(page, public_sels, "访问公网地址")
             time.sleep(5)
             self.shot(page, "final")
         else:
