@@ -6,14 +6,32 @@ Koyeb 自动登录脚本 (GitHub 认证版)
 """
 
 import os
+import sys
 import time
 from playwright.sync_api import sync_playwright
 from base import BaseAutoLogin
+from generate_sign import generate_sign
 
 # ==================== 配置 ====================
 PROXY_DSN = os.environ.get("PROXY_DSN", "").strip()
 KOYEB_SIGNIN_URL = "https://app.koyeb.com/auth/signin"
 KOYEB_SERVICES_URL = "https://app.koyeb.com/services"
+
+# ============================================================
+#  Webhook 重试链接生成
+# ============================================================
+_HOOK_BASE = "https://aa.94sub.qzz.io/hook"
+_HOOK_ACCESS_KEY = "123"
+_HOOK_USER = "dfg727"
+_HOOK_REPO = "ClawCloud-Run"
+_HOOK_WORKFLOW = "keep-alive-renew.yml"
+
+
+def build_retry_url() -> str:
+    """生成带签名的 Webhook 重试链接"""
+    ts, sign = generate_sign()
+    param = f"{ts}|{sign}|{_HOOK_USER}|{_HOOK_REPO}|{_HOOK_WORKFLOW}"
+    return f"{_HOOK_BASE}?access_key={_HOOK_ACCESS_KEY}&param={param}"
 
 class KoyebAutoLogin(BaseAutoLogin):
     def __init__(self):
@@ -47,6 +65,8 @@ class KoyebAutoLogin(BaseAutoLogin):
         msg = f"<b>🤖 {self.service_name} 自动任务</b>\n\n<b>状态:</b> {'✅ 成功' if ok else '❌ 失败'}\n<b>时间:</b> {time.strftime('%Y-%m-%d %H:%M:%S')}"
         if err: msg += f"\n<b>错误:</b> {err}"
         msg += "\n\n<b>日志摘录:</b>\n" + "\n".join(self.logs[-5:])
+        if not ok:
+            msg += f"\n\n🔁 重试链接: {build_retry_url()}"
         self.tg.send(msg)
         if self.shots: self.tg.photo(self.shots[-1], "最后状态")
 
