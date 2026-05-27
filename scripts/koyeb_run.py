@@ -21,7 +21,7 @@ KOYEB_SERVICES_URL = "https://app.koyeb.com/services"
 #  Webhook 重试链接生成
 # ============================================================
 _HOOK_BASE = "https://aa.94sub.qzz.io/hook"
-_HOOK_ACCESS_KEY = "123"
+_HOOK_ACCESS_KEY = os.environ.get("HOOK_ACCESS_KEY", "LUenTR6XIqS3AiaA87brxJKkrXFVpQPrHYoWgVv06F78C5Ra").strip()
 _HOOK_USER = "dfg727"
 _HOOK_REPO = "ClawCloud-Run"
 _HOOK_WORKFLOW = "keep-alive-renew.yml"
