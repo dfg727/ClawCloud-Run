@@ -18,7 +18,7 @@ class Telegram:
         if not self.ok: return
         try:
             requests.post(f"https://api.telegram.org/bot{self.token}/sendMessage",
-                        data={"chat_id": self.chat_id, "text": msg, "parse_mode": "HTML"}, timeout=30)
+                        data={"chat_id": self.chat_id, "text": msg, "disable_web_page_preview": True, "parse_mode": "HTML"}, timeout=30)
         except: pass
     
     def photo(self, path, caption=""):
